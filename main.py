@@ -44,24 +44,32 @@ if __name__ == '__main__':
                 rt = ID[3].strip(',')
 
                 # data hazard
-                if WB:
+                if WB and WB[0] != 'beq' and WB[0] != 'sw':
                     if rs == WB[1].strip(',') or rt == WB[1].strip(','):
                         stall = True
 
-                if MEM:
+                if MEM and MEM[0] != 'beq' and MEM[0] != 'sw':
                     if rs == MEM[1].strip(',') or rt == MEM[1].strip(','):
+                        stall = True
+
+                if EX and EX[0] != 'beq' and EX[0] != 'sw':
+                    if rs == EX[1].strip(',') or rt == EX[1].strip(','):
                         stall = True
 
             elif ID[0] == 'sw':
                 rs = ID[1].strip(',')
 
                 # data hazard
-                if WB:
+                if WB and WB[0] != 'beq' and WB[0] != 'sw':
                     if rs == WB[1].strip(','):
                         stall = True
 
-                if MEM:
+                if MEM and MEM[0] != 'beq' and MEM[0] != 'sw':
                     if rs == MEM[1].strip(','):
+                        stall = True
+
+                if EX and EX[0] != 'beq' and EX[0] != 'sw':
+                    if rs == EX[1].strip(','):
                         stall = True
 
             elif ID[0] == 'beq':
@@ -78,12 +86,16 @@ if __name__ == '__main__':
                         dmem[i] = mem[i]
 
                 # data hazard
-                if WB:
+                if WB and WB[0] != 'beq' and WB[0] != 'sw':
                     if rs == WB[1].strip(',') or rt == WB[1].strip(','):
                         stall = True
 
-                if MEM:
+                if MEM and MEM[0] != 'beq' and MEM[0] != 'sw':
                     if rs == MEM[1].strip(',') or rt == MEM[1].strip(','):
+                        stall = True
+                
+                if EX and EX[0] != 'beq' and EX[0] != 'sw':
+                    if rs == EX[1].strip(',') or rt == EX[1].strip(','):
                         stall = True
 
         # no stalls then move on
@@ -133,7 +145,9 @@ if __name__ == '__main__':
 
                 if reg[rs] == reg[rt]:
                     ID = ''
-                    current += target
+                    current = inst.index(EX) + target + 1
+                    IF = inst[current] if len(inst) > current else ''
+                    current += 1
                     # if taken, we have to restore the values when beq is fetched
                     for i in range(1, len(reg)): # since $0 is always zero
                         if i in dreg.keys(): reg[i] = dreg[i]
