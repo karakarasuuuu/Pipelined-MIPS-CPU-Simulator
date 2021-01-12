@@ -44,15 +44,15 @@ if __name__ == '__main__':
                 rt = ID[3].strip(',')
 
                 # data hazard
-                if WB and WB[0] != 'beq' and WB[0] != 'sw':
-                    if rs == WB[1].strip(',') or rt == WB[1].strip(','):
-                        stall = True
+                # if WB and WB[0] != 'beq' and WB[0] != 'sw':
+                #     if rs == WB[1].strip(',') or rt == WB[1].strip(','):
+                #         stall = True
 
-                if MEM and MEM[0] != 'beq' and MEM[0] != 'sw':
-                    if rs == MEM[1].strip(',') or rt == MEM[1].strip(','):
-                        stall = True
+                # if MEM and MEM[0] != 'beq' and MEM[0] != 'sw':
+                #     if rs == MEM[1].strip(',') or rt == MEM[1].strip(','):
+                #         stall = True
 
-                if EX and EX[0] != 'beq' and EX[0] != 'sw':
+                if EX and EX[0] == 'lw':
                     if rs == EX[1].strip(',') or rt == EX[1].strip(','):
                         stall = True
 
@@ -60,15 +60,15 @@ if __name__ == '__main__':
                 rs = ID[1].strip(',')
 
                 # data hazard
-                if WB and WB[0] != 'beq' and WB[0] != 'sw':
-                    if rs == WB[1].strip(','):
-                        stall = True
+                # if WB and WB[0] != 'beq' and WB[0] != 'sw':
+                #     if rs == WB[1].strip(','):
+                #         stall = True
 
-                if MEM and MEM[0] != 'beq' and MEM[0] != 'sw':
-                    if rs == MEM[1].strip(','):
-                        stall = True
+                # if MEM and MEM[0] != 'beq' and MEM[0] != 'sw':
+                #     if rs == MEM[1].strip(','):
+                #         stall = True
 
-                if EX and EX[0] != 'beq' and EX[0] != 'sw':
+                if EX and EX[0] == 'lw':
                     if rs == EX[1].strip(','):
                         stall = True
 
@@ -86,15 +86,15 @@ if __name__ == '__main__':
                         dmem[i] = mem[i]
 
                 # data hazard
-                if WB and WB[0] != 'beq' and WB[0] != 'sw':
-                    if rs == WB[1].strip(',') or rt == WB[1].strip(','):
-                        stall = True
+                # if WB and WB[0] != 'beq' and WB[0] != 'sw':
+                #     if rs == WB[1].strip(',') or rt == WB[1].strip(','):
+                #         stall = True
 
-                if MEM and MEM[0] != 'beq' and MEM[0] != 'sw':
-                    if rs == MEM[1].strip(',') or rt == MEM[1].strip(','):
-                        stall = True
+                # if MEM and MEM[0] != 'beq' and MEM[0] != 'sw':
+                #     if rs == MEM[1].strip(',') or rt == MEM[1].strip(','):
+                #         stall = True
                 
-                if EX and EX[0] != 'beq' and EX[0] != 'sw':
+                if EX and EX[0] == 'lw':
                     if rs == EX[1].strip(',') or rt == EX[1].strip(','):
                         stall = True
 
