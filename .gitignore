@@ -1,3 +1,13 @@
 *
-!main.py
 !.gitignore
+
+!forward.py
+!stall.py
+
+
+!example.txt
+!forward.txt
+
+!memory.txt
+
+!README.md

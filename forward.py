@@ -29,84 +29,15 @@ if __name__ == '__main__':
     # process
     while True:
     
-        stall = False
+        # stall = False
 
         # instructions after ID will not be affected
         WB = MEM
         MEM = EX
-        EX = ''
 
-        # check if stall is needed
-        if ID:
-            if ID[0] == 'add' or ID[0] == 'sub': 
-                rd = ID[1].strip(',')
-                rs = ID[2].strip(',')
-                rt = ID[3].strip(',')
-
-                # data hazard
-                if WB and WB[0] != 'beq' and WB[0] != 'sw':
-                    if rs == WB[1].strip(',') or rt == WB[1].strip(','):
-                        stall = True
-
-                if MEM and MEM[0] != 'beq' and MEM[0] != 'sw':
-                    if rs == MEM[1].strip(',') or rt == MEM[1].strip(','):
-                        stall = True
-
-                if EX and EX[0] != 'beq' and EX[0] != 'sw':
-                    if rs == EX[1].strip(',') or rt == EX[1].strip(','):
-                        stall = True
-
-            elif ID[0] == 'sw':
-                rs = ID[1].strip(',')
-
-                # data hazard
-                if WB and WB[0] != 'beq' and WB[0] != 'sw':
-                    if rs == WB[1].strip(','):
-                        stall = True
-
-                if MEM and MEM[0] != 'beq' and MEM[0] != 'sw':
-                    if rs == MEM[1].strip(','):
-                        stall = True
-
-                if EX and EX[0] != 'beq' and EX[0] != 'sw':
-                    if rs == EX[1].strip(','):
-                        stall = True
-
-            elif ID[0] == 'beq':
-                rs = ID[1].strip(',')
-                rt = ID[2].strip(',')
-
-                # if the value is different from the initial stage, we store it
-                for i in range(1, len(reg)): # since $0 is always zero
-                    if reg[i] != 1:
-                        dreg[i] = reg[i]
-
-                for i in range(len(mem)):
-                    if mem[i] != 1:
-                        dmem[i] = mem[i]
-
-                # data hazard
-                if WB and WB[0] != 'beq' and WB[0] != 'sw':
-                    if rs == WB[1].strip(',') or rt == WB[1].strip(','):
-                        stall = True
-
-                if MEM and MEM[0] != 'beq' and MEM[0] != 'sw':
-                    if rs == MEM[1].strip(',') or rt == MEM[1].strip(','):
-                        stall = True
-                
-                if EX and EX[0] != 'beq' and EX[0] != 'sw':
-                    if rs == EX[1].strip(',') or rt == EX[1].strip(','):
-                        stall = True
-
-        # no stalls then move on
-        if not stall:
-            EX = ID
-            ID = IF
-            IF = inst[current] if len(inst) > current else ''
-            current += 1
-
+        EX = ID if not stall else ''
         # registers and memory process if no stall
-        if EX:
+        if EX and not stall:
             # store words from register to memory
             if EX[0] == 'sw':
                 rs = int(EX[1].strip('$, '))
@@ -158,6 +89,77 @@ if __name__ == '__main__':
                         if i in dmem.keys(): mem[i] = dmem[i]
                         elif mem[i] != 1: mem[i] = 1
                     dmem.clear()
+
+        # check if stall is needed
+        if not stall: ID = IF
+        if ID:
+            stall = False
+            if ID[0] == 'add' or ID[0] == 'sub': 
+                rd = ID[1].strip(',')
+                rs = ID[2].strip(',')
+                rt = ID[3].strip(',')
+
+                # data hazard
+                # if WB and WB[0] != 'beq' and WB[0] != 'sw':
+                #     if rs == WB[1].strip(',') or rt == WB[1].strip(','):
+                #         stall = True
+
+                # if MEM and MEM[0] != 'beq' and MEM[0] != 'sw':
+                #     if rs == MEM[1].strip(',') or rt == MEM[1].strip(','):
+                #         stall = True
+
+                if EX and EX[0] == 'lw':
+                    if rs == EX[1].strip(',') or rt == EX[1].strip(','):
+                        stall = True
+
+            elif ID[0] == 'sw':
+                rs = ID[1].strip(',')
+
+                # data hazard
+                # if WB and WB[0] != 'beq' and WB[0] != 'sw':
+                #     if rs == WB[1].strip(','):
+                #         stall = True
+
+                # if MEM and MEM[0] != 'beq' and MEM[0] != 'sw':
+                #     if rs == MEM[1].strip(','):
+                #         stall = True
+
+                if EX and EX[0] == 'lw':
+                    if rs == EX[1].strip(','):
+                        stall = True
+
+            elif ID[0] == 'beq':
+                rs = ID[1].strip(',')
+                rt = ID[2].strip(',')
+
+                # if the value is different from the initial stage, we store it
+                for i in range(1, len(reg)): # since $0 is always zero
+                    if reg[i] != 1:
+                        dreg[i] = reg[i]
+
+                for i in range(len(mem)):
+                    if mem[i] != 1:
+                        dmem[i] = mem[i]
+
+                # data hazard
+                # if WB and WB[0] != 'beq' and WB[0] != 'sw':
+                #     if rs == WB[1].strip(',') or rt == WB[1].strip(','):
+                #         stall = True
+
+                if MEM and MEM[0] == 'lw':
+                    if rs == MEM[1].strip(',') or rt == MEM[1].strip(','):
+                        stall = True
+                
+                if EX and EX[0] == 'lw':
+                    if rs == EX[1].strip(',') or rt == EX[1].strip(','):
+                        stall = True
+
+        # no stalls then move on
+        if not stall:
+            # EX = ID
+            # ID = IF
+            IF = inst[current] if len(inst) > current else ''
+            current += 1
                     
         # control signals
         if EX:
