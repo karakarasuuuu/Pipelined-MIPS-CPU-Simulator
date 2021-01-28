@@ -1,5 +1,6 @@
 *
-!main.py
+!forward.py
+!stall.py
 !.gitignore
 !example.txt
 !forward.txt
